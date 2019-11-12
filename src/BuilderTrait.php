@@ -171,16 +171,14 @@ trait BuilderTrait
             return $record->{$this->model->getKeyName()};
         }, $affectedRecords);
 
-        // delete main table records
-        if (! $this->query->delete()) {
-            return false;
-        }
-
         // delete version table records
         $db = $this->model->getConnection();
-        return $db->table($this->model->getVersionTable())
+        $db->table($this->model->getVersionTable())
             ->whereIn($this->model->getVersionKeyName(), $ids)
             ->delete();
+
+        // delete main table records
+        return $this->query->delete();
     }
 
     /**
